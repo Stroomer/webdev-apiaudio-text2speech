@@ -1,12 +1,37 @@
-# Start - "The Boilerplate" -
+# TEXT-TO-SPEECH API
 
-# Deze boilerplate mag je gebruiken als 'beginnetje' om het developmentproces wat te versnellen
-# Het zorgt ervoor dat je snel up-and-running bent met een basis-setup voor: 
-
+# Deze applicatie maakt gebruik van:
 # - Webpack
+# - BabelJS
 # - node packages
-# - voorbereidingen voor GIT
-# - SASS / SCSS loaders
+# - GIT
+# - SCSS
+# - HTML/CSS/JS
+# - Modules/imports/exports
+# - API (npm package apiaudio, api_key --> get your own!)
+# - Async/Await
+# - ES6 functions .map() .filter()
 
-# Tevens biedt deze boilerplate ook een mooie opstap voor als je straks aan de slag gaat met React, NextJS in de periode hierna
-# Uiteraard staat het je vrij om dit zelfstandig op te bouwen indien je eraan toe bent!
+# Datum: 10-11-2021
+# Vier van de vijf comboboxen werken, de data wordt opgehaald uit de API.
+# Toch doe ik momenteel in api.js iets dat niet zo heel handig is, ik haal namelijk bij iedere API-call alle data op (waste of time!).
+# Het plan was om dat netjes (met optionele parameters) te doen, en alleen op te halen wat je op dat moment nodig hebt.
+# Misschien is het toch handiger op de data in een keer op te halen, en daarna per combobox de juist data eruit te filteren.
+# Ik ga hem even naar de GIT pushen. Kan jij hem verder uitbouwen en/of verbeteren? Laat het maar zien!
+
+# ERROR: 
+# Onderstaande error krijg ik af en toe, vermoedelijk omdat ik mijn API te vaak aanroep. 
+
+TypeError: Failed to fetch
+    at <anonymous>:1:876
+    at _callee6$ (api.js:195)
+    at tryCatch (runtime.js:63)
+    at Generator.invoke [as _invoke] (runtime.js:294)
+    at Generator.eval [as next] (runtime.js:119)
+    at asyncGeneratorStep (asyncToGenerator.js:7)
+    at _next (asyncToGenerator.js:29)
+    at eval (asyncToGenerator.js:36)
+    at new Promise (<anonymous>)
+    at eval (asyncToGenerator.js:25)
+
+
