@@ -1,71 +1,52 @@
 import apiaudio from "apiaudio";
-import { removeDuplicates, requireExistence } from "./functions";
+import { removeDuplicatesArray, removeDuplicatesObjectsArray, requireExistence } from "./functions";
 
 const api_key = process.env.API_KEY;
 const url = 'https://v1.api.audio/voice';
-const options = { method: 'GET', headers: { Accept: 'application/json', 'x-api-key': api_key } };
+const options = { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } };
 
 // get array with all data from API, unfiltered, 256 objects
 const getData = async () => {
     const result = fetch(url, options)
         .then(response => response.json())
-        .then(response => response['voices'])
+        .then(response => console.log(response))
         .catch(err => console.error(err));
     return result;
 }
 
-// get array with all languages, remove duplicates
-const getLanguages = async () => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(response['voices'], 'language').map((data) => data.language))
-        .catch(err => console.error(err));
-    return result;
+// get all languages, remove duplicates
+const getLanguages = async (data) => {
+    const raw = data['voices'];
+    const languages = raw.map((item) => item.language);
+    return removeDuplicatesArray(languages);
 }
 
-// get array with all accents, remove duplicates
-const getAccents = async () => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(response['voices'], 'accent').map((data) => data.accent))
-        .catch(err => console.error(err));
-    return result;
+// get all accents, remove duplicates
+const getAccents = async (data) => {
+    const raw = data['voices'];
+    const accents = raw.map((item) => item.accent);
+    return removeDuplicatesArray(accents);
 }
 
-// get array with accents for a specific language, remove duplicates
-const getAccentsForLanguage = async (language) => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(requireExistence(response['voices'], 'language', language), 'accent').map((data) => data.accent))
-        .catch(err => console.error(err));
-    return result;
-}
-
-// get array with all genders
-const getGenders = async () => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(response['voices'], 'gender').map((data) => data.gender))
-        .catch(err => console.error(err));
-    return result;
+// get all genders
+const getGenders = async (data) => {
+    const raw = data['voices'];
+    const genders = raw.map((item) => item.gender);
+    return removeDuplicatesArray(genders);
 }
 
 // get array with all ages
-const getAgeBrackets = async () => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(response['voices'], 'ageBracket').map((data) => data.ageBracket))
-        .catch(err => console.error(err));
-    return result;
+const getAgeBrackets = async (data) => {
+    const raw = data['voices'];
+    const age = raw.map((item) => item.ageBracket);
+    return removeDuplicatesArray(age);
 }
 
 // get array with all names
-const getName = async () => {
-    const result = fetch(url, options)
-        .then(response => response.json())
-        .then(response => removeDuplicates(response['voices'], 'ageBracket').map((data) => data.ageBracket))
-        .catch(err => console.error(err));
-    return result;
+const getNames = async (data) => {
+    const raw = data['voices'];
+    const name = raw.map((item) => item.alias);
+    return removeDuplicatesArray(name);
 }
 
 // function process(language = null, accent = null, gender = null, age = null, name = null) {
@@ -73,7 +54,7 @@ const getName = async () => {
 // }
 
 
-export { getData, getLanguages, getAccents, getAccentsForLanguage, getGenders, getAgeBrackets, getName }
+export { getData, getLanguages, getAccents, getGenders, getAgeBrackets, getNames };
 
 
 

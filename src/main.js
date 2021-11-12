@@ -1,15 +1,17 @@
 import "./style.scss";
+import * as data from './data.json';
 
 import { capitalize } from "./functions";
-import { getData, getLanguages, getAccents, getAccentsForLanguage, getGenders, getAgeBrackets } from "./api";
+import { getData, getLanguages, getAccents, getGenders, getAgeBrackets, getNames } from "./api";
 
 let blocked;
 
-let data;
+//let data;
 let languages;
 let accents;
 let genders;
 let ages;
+let names;
 
 
 window.addEventListener('load', async () => {
@@ -17,37 +19,42 @@ window.addEventListener('load', async () => {
 
     createForm();
 
-    data = await getData();
-    if (data.length > 0) {
-        data.forEach((object) => {
-            if (object.alias === '' || object.alias === undefined) {
-                object.alias = object.voiceName.split('_')[1].toLowerCase();    // if no alias exists, take a slice from the voicename
-            }
+    //data = await getData();
+    // if (data.length > 0) {
+    //     data.forEach((object) => {
+    //         if (object.alias === '' || object.alias === undefined) {
+    //             object.alias = object.voiceName.split('_')[1].toLowerCase();    // if no alias exists, take a slice from the voicename
+    //         }
 
-            //const warning = object.alias === '' || object.voiceName === '' || object.alias === undefined || object.voiceName === undefined ? 'WARNING' : '';
-            //const warning = object.alias === 'omazh' || object.alias === 'zahar' ? 'WARNING' : '';
-            //console.log(`${warning}   alias: ${object.alias}   voicename: ${object.voiceName}`);
-        });
-    }
+    //         //const warning = object.alias === '' || object.voiceName === '' || object.alias === undefined || object.voiceName === undefined ? 'WARNING' : '';
+    //         //const warning = object.alias === 'omazh' || object.alias === 'zahar' ? 'WARNING' : '';
+    //         //console.log(`${warning}   alias: ${object.alias}   voicename: ${object.voiceName}`);
+    //     });
+    // }
 
-    languages = await getLanguages();
+    languages = await getLanguages(data);
     if (languages.length > 0) {
         populate('language', languages);
     }
 
-    accents = await getAccents();
+    accents = await getAccents(data);
     if (accents.length > 0) {
         populate('accent', accents);
     }
 
-    genders = await getGenders();
+    genders = await getGenders(data);
     if (genders.length > 0) {
         populate('gender', genders);
     }
 
-    ages = await getAgeBrackets();
+    ages = await getAgeBrackets(data);
     if (ages.length > 0) {
         populate('age', ages);
+    }
+
+    names = await getNames(data);
+    if (names.length > 0) {
+        populate('name', names);
     }
 });
 
@@ -165,9 +172,9 @@ function createComboBox(id) {
                     console.log('language deselected');
                 } else {
                     console.log('lang: ' + value);
-                    unpopulate('accent');               // remove current list of accents
-                    accents = await getAccentsForLanguage(value);  // reload accents for this language only
-                    populate('accent', accents, 1);
+                    //unpopulate('accent');               // remove current list of accents
+                    //accents = await getAccentsForLanguage(value);  // reload accents for this language only
+                    //populate('accent', accents, 1);
                 }
                 break;
             case 'accent':
