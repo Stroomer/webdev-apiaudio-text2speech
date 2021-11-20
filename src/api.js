@@ -1,11 +1,10 @@
 import apiaudio from "apiaudio";
-import { removeDuplicatesArray, removeDuplicatesObjectsArray, requireExistence } from "./functions";
+import { removeDuplicates, removeDuplicatesObjectsArray } from "./functions";
 
 const api_key = process.env.API_KEY;
 const url = 'https://v1.api.audio/voice';
 const options = { method: 'GET', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } };
 
-// get array with all data from API, unfiltered, 256 objects
 const getData = async () => {
     const result = fetch(url, options)
         .then(response => response.json())
@@ -14,45 +13,30 @@ const getData = async () => {
     return result;
 }
 
-// get all languages, remove duplicates
-const getLanguages = async (data) => {
-    const raw = data['voices'];
-    const languages = raw.map((item) => item.language);
-    return removeDuplicatesArray(languages);
+const getLanguages = (data) => {
+    const languages = data.map((item) => item.language);
+    return removeDuplicates(languages);
 }
 
-// get all accents, remove duplicates
-const getAccents = async (data) => {
-    const raw = data['voices'];
-    const accents = raw.map((item) => item.accent);
-    return removeDuplicatesArray(accents);
+const getAccents = (data) => {
+    const accents = data.map((item) => item.accent);
+    return removeDuplicates(accents);
 }
 
-// get all genders
-const getGenders = async (data) => {
-    const raw = data['voices'];
-    const genders = raw.map((item) => item.gender);
-    return removeDuplicatesArray(genders);
+const getGenders = (data) => {
+    const genders = data.map((item) => item.gender);
+    return removeDuplicates(genders);
 }
 
-// get array with all ages
-const getAgeBrackets = async (data) => {
-    const raw = data['voices'];
-    const age = raw.map((item) => item.ageBracket);
-    return removeDuplicatesArray(age);
+const getAgeBrackets = (data) => {
+    const ages = data.map((item) => item.ageBracket);
+    return removeDuplicates(ages);
 }
 
-// get array with all names
-const getNames = async (data) => {
-    const raw = data['voices'];
-    const name = raw.map((item) => item.alias);
-    return removeDuplicatesArray(name);
+const getNames = (data) => {
+    const names = data.map((item) => item.alias);
+    return removeDuplicates(names);
 }
-
-// function process(language = null, accent = null, gender = null, age = null, name = null) {
-//     return;
-// }
-
 
 export { getData, getLanguages, getAccents, getGenders, getAgeBrackets, getNames };
 
