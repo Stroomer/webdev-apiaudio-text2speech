@@ -1,6 +1,3 @@
-// function filterObjectsArray(array, prop, value) {
-//     return array.filter((element, index, array) => array.findIndex(item => (item[prop] === value)) === index);
-// }
 
 function filterObjectsArray(array, prop, value) {
     return array.filter((obj) => { return obj[prop] === value });
@@ -9,13 +6,6 @@ function filterObjectsArray(array, prop, value) {
 function getArrayFromObjectsArray(array, prop) {
     return array.map((obj) => obj[prop]);
 }
-
-// function requiredItem(array, key, value, retrieve) {
-//     let result = array.filter((item) => { return item[key] === value });
-//     result = result.map((element) => element[retrieve]);
-//     result = removeDuplicates(result);
-//     return result;
-// }
 
 function removeDuplicates(array) {
     return [...new Set(array)];
@@ -41,4 +31,17 @@ function capitalize(str) {
     return str.substr(0, 1).toUpperCase() + str.substr(1, str.length).toLowerCase();
 }
 
-export { removeDuplicates, removeRedundant, filterObjectsArray, getArrayFromObjectsArray, capitalize };
+function getComboValues(combos, defaults) {
+    let i, id, cb, val, res = [];
+    const count = combos.length;
+    for (let i = 0; i < count; i++) {
+        id = combos[i];
+        cb = document.getElementById(id);
+        val = id !== 'textarea' ? cb.value : cb.value.trim();
+        val = val !== '' ? val : defaults[i];
+        res.push(val);
+    }
+    return res;
+}
+
+export { removeDuplicates, removeRedundant, filterObjectsArray, getArrayFromObjectsArray, capitalize, getComboValues };

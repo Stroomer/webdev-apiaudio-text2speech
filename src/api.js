@@ -38,45 +38,42 @@ const getNames = (data) => {
     return removeDuplicates(names);
 }
 
-export { getData, getLanguages, getAccents, getGenders, getAgeBrackets, getNames };
+const getSpeeds = () => {
+    return [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+}
+
+const getEffects = () => {
+    return ['dark_father', 'chewie', '88b', '2r2d', 'volume_boost_low', 'volume_boost_middle', 'volume_boost_high']
+}
+
+//// 'language', 'accent', 'gender', 'age', 'name', 'speed', 'effect', 'textarea'
 
 
 
+const getAudio = async (params) => {
+    const [lang, acc, gen, age, name, spd, eff, txt] = params;
 
+    console.log(lang, acc, gen, age, name, spd, eff, txt);
 
+    apiaudio.reset();
+    apiaudio.configure({ apiKey: api_key });
 
+    try {
+        const id = "data";
+        const script = await apiaudio.Script.create({ scriptText: `<<soundSegment::ambience>> <<sectionName::${id}>> ${txt}`, scriptName: id, projectName: id, moduleName: id });
+        const speech = await apiaudio.Speech.create({ scriptId: script["scriptId"], voice: name, speed: spd, effect: eff });
+        const audio = new Audio(speech.data.url);
+        audio.play();
 
+        console.log("Success: " + speech.data.url);
+    }
+    catch (error) {
+        console.log(error);
+        return null;
+    }
+}
 
-
-
-
-
-// export const getTextConvertedToWav = async (text, voice = null) => {
-//     try {
-//         apiaudio.reset();
-//         apiaudio.configure({ apiKey: api_key });
-
-//         const id = "data";
-//         const voice = voice === null ? "aria" : voice;
-//         const script = await apiaudio.Script.create({ scriptText: `<<soundSegment::ambience>> <<sectionName::${id}>> ${text}`, scriptName: id, projectName: id, moduleName: id });
-//         const speech = await apiaudio.Speech.create({ scriptId: script["scriptId"], voice: voice });
-
-//         //const audio = new Audio(speech.data.url);
-
-//         //audio.play();
-
-//         //blocked = false;
-//         //console.log('blocked: ' + blocked);
-
-//         console.log("Success: " + speech.data.url);
-
-//         return speech.data.url;
-//     }
-//     catch (error) {
-//         console.log(`Error: ${error}`);
-//         return null;
-//     }
-// }
+export { getData, getLanguages, getAccents, getGenders, getAgeBrackets, getNames, getSpeeds, getEffects, getAudio };
 
 // export const getDataListVoices = async () => {
 //     const options = { method: 'GET', headers: { Accept: 'application/json', 'x-api-key': api_key } };

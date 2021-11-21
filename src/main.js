@@ -1,8 +1,8 @@
 import "./style.scss";
 import json from './data.json';
 
-import { capitalize, removeRedundant, filterObjectsArray, getArrayFromObjectsArray, removeDuplicates } from "./functions";
-import { getLanguages, getAccents, getGenders, getAgeBrackets, getNames } from "./api";
+import { capitalize, removeRedundant, filterObjectsArray, getArrayFromObjectsArray, removeDuplicates, getComboValues } from "./functions";
+import { getLanguages, getAccents, getGenders, getAgeBrackets, getNames, getSpeeds, getEffects, getAudio } from "./api";
 import { getData } from "./api";
 
 let languages;
@@ -10,30 +10,37 @@ let accents;
 let genders;
 let ages;
 let names;
+let speeds;
+let effects;
 
 let voices;
 let voicesFiltered;
 
 window.addEventListener('load', async () => {
     voices = removeRedundant(json, ['audioSample', 'industryExamples', 'longSoftDescription', 'provider', 'providerFullName', 'supportedStyles', 'tags']);
-    voicesFiltered = voices.slice(0);
 
     createForm();
-    initializeForm(voicesFiltered);
+    initialize();
 });
 
-function initializeForm(data) {
-    languages = getLanguages(data);
-    accents = getAccents(data);
-    genders = getGenders(data);
-    ages = getAgeBrackets(data);
-    names = getNames(data);
+function initialize() {
+    voicesFiltered = voices.slice(0);
+
+    languages = getLanguages(voicesFiltered);
+    accents = getAccents(voicesFiltered);
+    genders = getGenders(voicesFiltered);
+    ages = getAgeBrackets(voicesFiltered);
+    names = getNames(voicesFiltered);
+    speeds = getSpeeds();
+    effects = getEffects();
 
     if (languages.length > 0) populate('language', languages);
     if (accents.length > 0) populate('accent', accents);
     if (genders.length > 0) populate('gender', genders);
     if (ages.length > 0) populate('age', ages);
     if (names.length > 0) populate('name', names);
+    if (speeds.length > 0) populate('speed', speeds);
+    if (effects.length > 0) populate('effect', effects);
 }
 
 function populate(id, data, selected = null) {
@@ -41,12 +48,6 @@ function populate(id, data, selected = null) {
     const event = new CustomEvent('populate', { detail: { data: data, selected: selected } });
     combobox.dispatchEvent(event);
 }
-
-// function unpopulate(id) {
-//     const combobox = document.getElementById(id);
-//     const event = new CustomEvent('unpopulate');
-//     combobox.dispatchEvent(event);
-// }
 
 function createForm() {
     const form = document.createElement('form');
@@ -64,6 +65,8 @@ function createForm() {
     form.appendChild(createComboBox('gender'));
     form.appendChild(createComboBox('age'));
     form.appendChild(createComboBox('name'));
+    form.appendChild(createComboBox('speed'));
+    form.appendChild(createComboBox('effect'));
     form.appendChild(createTextArea('textarea'));
     form.appendChild(createButton('send'));
 
@@ -78,15 +81,14 @@ function createButton(id) {
             button.innerHTML = capitalize(id);
             button.addEventListener('click', async (event) => {
                 event.preventDefault();
-                const textarea = document.getElementById('textarea');
-                const text = textarea.value.trim();
-                textarea.value = '';
-                textarea.style.backgroundColor = null;
-                //if (!blocked) {
-                console.log('start');
-                //const wav = await getTextConvertedToWav(text);
-                console.log('stop');
-                //}
+
+                const comboIds = ['language', 'accent', 'gender', 'age', 'name', 'speed', 'effect', 'textarea'];
+                const comboDefaults = ['english', 'british', 'male', 'adult', 'tony', 100, 'volume_boost_middle', 'testing, testing, this is a test'];
+                const comboValues = getComboValues(comboIds, comboDefaults);
+
+                console.log(comboValues);
+
+                const wav = await getAudio(comboValues);
             });
             break;
     }
@@ -148,7 +150,7 @@ function createComboBox(id) {
             if (value !== undefined && value !== '') {
                 const option = document.createElement('option');
                 option.setAttribute('value', value);
-                option.innerHTML = capitalize(value);
+                option.innerHTML = capitalize(value.toString());
                 select.appendChild(option);
             }
         });
@@ -164,9 +166,6 @@ function createComboBox(id) {
                 voicesFiltered = voices.slice(0);
                 voicesFiltered = index === 0 ? voicesFiltered : filterObjectsArray(voicesFiltered, 'language', value);
 
-                //languages = getLanguages(voicesFiltered);
-                //populate('language', languages, index === 0 ? 0 : 1); 
-
                 accents = getAccents(voicesFiltered);
                 populate('accent', accents, index === 0 ? 0 : 1);
 
@@ -174,24 +173,35 @@ function createComboBox(id) {
                 populate('name', names, index === 0 ? 0 : 1);
                 break;
             case 'accent':
-                //const cb_lang = getComboboxSelected('language');
-                //voicesFiltered = cb_lang.index === 0 ? voicesFiltered : filterObjectsArray(voicesFiltered, 'language', cb_lang.value);
+                // if (getComboboxSelected('language').index === 0) {
+                //     languages = getLanguages(voicesFiltered);
+                //     populate('language', languages, 1);
+                // }
 
-                if (getComboboxSelected('language').index === 0) {
-                    languages = getLanguages(voicesFiltered);
-                    populate('language', languages, 1);
-                }
+                //console.log(getComboboxSelected('language').index);
 
-                console.log(getComboboxSelected('language').index);
 
                 names = getNames(voicesFiltered);
                 populate('name', names, index === 0 ? 0 : 1);
+
+                // document.getElementById('accent').disabled = true;
+                // document.getElementById('gender').disabled = false;
                 break;
             case 'gender':
+                // document.getElementById('gender').disabled = true;
+                // document.getElementById('age').disabled = false;
+
+                voicesFiltered = index === 0 ? voicesFiltered : filterObjectsArray(voicesFiltered, 'gender', value);
+
+                names = getNames(voicesFiltered);
+                populate('name', names, index === 0 ? 0 : 1);
 
                 break;
             case 'age':
+                voicesFiltered = index === 0 ? voicesFiltered : filterObjectsArray(voicesFiltered, 'ageBracket', value);
 
+                names = getNames(voicesFiltered);
+                populate('name', names, index === 0 ? 0 : 1);
                 break;
             case 'name':
 
